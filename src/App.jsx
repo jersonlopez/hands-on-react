@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import Support from './components/Support';
 import ListCast from './components/listCast';
-import Modals from './components/Modals';
+import Modal from './components/Modals';
 import Nav from './components/Nav';
 
 function App() {
@@ -14,15 +14,23 @@ function App() {
   const fetchCast = async () => {
     const response = await fetch('cast.json');
     setCast(await response.json());
-  }
+  };
 
   useEffect(() => {
     fetchCast();
-  })
+  });
+
+  const minIndex = 0;
+  const maxIndex = cast.length - 1;
 
   return (
     <>
-      <Nav cast={cast} onChoice={info => {setMemberInfo(info)}}/>
+      <Nav
+        cast={cast}
+        onChoice={(info) => {
+          setMemberInfo(info);
+        }}
+      />
       <div className="container">
         <hgroup>
           <img src="images/group.svg" alt="StarGazers Group" />
@@ -39,10 +47,17 @@ function App() {
             }}
           />
           {memberInfo && (
-            <Modals
+            <Modal
               member={memberInfo}
               handleClose={() => {
                 setMemberInfo(null);
+              }}
+              handleChange={(index) => {
+                index < minIndex
+                  ? setMemberInfo(cast[maxIndex])
+                  : index > maxIndex
+                  ? setMemberInfo(cast[minIndex])
+                  : setMemberInfo(cast[index]);
               }}
             />
           )}
